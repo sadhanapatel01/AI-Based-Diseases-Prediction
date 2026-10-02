@@ -1,0 +1,15 @@
+Timestamp: 2026-09-30_08-44-00
+========================================
+Clinical Input / Inquiry:
+ML Prediction: Drug Reaction
+Selected Symptoms (5): skin_rash, stomach_pain, high_fever, fast_heart_rate, foul_smell_of urine
+Gender: Female, Age: 24, Diabetes: yes, History: none
+
+Clinical Evaluation & Recommendations:
+### ML Prediction
+**Primary Predicted Disease:** Drug Reaction
+**Number of Symptoms:** 5
+**Model:** Random Forest
+
+### Gemini Clinical Explanation
+Error communicating with clinical AI engine: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}

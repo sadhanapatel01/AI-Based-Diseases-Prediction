@@ -1,0 +1,80 @@
+User Input:
+Symptoms: Fever
+, Gender: male, Age: 23, Diabetes: no, Previous Diseases: None
+
+Response:
+This information is for educational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. **If the fever is high (above 103°F or 39.4°C), persistent, or accompanied by a stiff neck, severe headache, or shortness of breath, seek immediate medical attention.**
+
+Given a 23-year-old male with a fever and no significant medical history, here is a breakdown based on your requirements:
+
+---
+
+### 1. Symptom Descriptions
+*   **Fever:** A fever is a temporary increase in body temperature, often due to an illness. It is the body's way of fighting off infection. 
+*   **Associated Sensations:** In a 23-year-old, fever is often accompanied by:
+    *   **Chills and Shivering:** As the body tries to raise its core temperature.
+    *   **Sweating:** As the body tries to cool down.
+    *   **Headache and Muscle Aches:** General malaise and discomfort.
+    *   **Dehydration:** Increased fluid loss through sweating and respiration.
+
+---
+
+### 2. Possible Diseases
+Given the age and lack of comorbidities, the most likely causes are:
+1.  **Viral Upper Respiratory Infection** (Common Cold or Influenza)
+2.  **COVID-19**
+3.  **Infectious Mononucleosis** ("Mono")
+4.  **Gastroenteritis** (Stomach Flu)
+5.  **Urinary Tract Infection (UTI)** (Less common in males, but possible)
+
+---
+
+### 3. Disease Descriptions
+*   **Influenza/COVID-19:** Viral infections that attack the respiratory system. They are characterized by sudden onset of fever, cough, and extreme fatigue.
+*   **Infectious Mononucleosis:** Caused by the Epstein-Barr virus (EBV). It is very common in young adults. Symptoms include high fever, severe sore throat, and swollen lymph nodes.
+*   **Gastroenteritis:** Inflammation of the lining of the intestines caused by a virus, bacteria, or parasites. Usually involves fever plus nausea, vomiting, or diarrhea.
+*   **Bacterial Infection (e.g., Strep Throat or UTI):** These require antibiotics and usually present with localized pain (throat pain or painful urination).
+
+---
+
+### 4. Precautions
+*   **Isolation:** If a viral infection is suspected, stay home to prevent spreading it to others.
+*   **Rest:** Avoid physical exertion to allow the immune system to recover.
+*   **Monitor Temperature:** Keep a log of temperature readings.
+*   **Spleen Protection (If Mono is suspected):** Avoid contact sports or heavy lifting, as Mono can cause an enlarged spleen which is prone to rupture.
+
+---
+
+### 5. Medications
+*Note: Always consult a healthcare provider before starting medication.*
+*   **Antipyretics (Fever Reducers):** 
+    *   **Acetaminophen (Tylenol):** Reduces fever and pain. 
+    *   **Ibuprofen (Advil/Motrin):** Reduces inflammation and fever.
+*   **Antivirals:** If diagnosed early, Oseltamivir (Tamiflu) may be used for Influenza.
+*   **Antibiotics:** Only used if a bacterial cause (like Strep or a UTI) is confirmed. *They do not work on viruses.*
+
+---
+
+### 6. Workout Regimen
+*   **During Fever:** **No exercise.** Physical exertion while febrile can increase the risk of myocarditis (inflammation of the heart muscle) and severe dehydration.
+*   **Post-Fever:** Once the fever has been gone for 24 hours without the use of medication, start with light walking. 
+*   **Mononucleosis Note:** If diagnosed with Mono, you must avoid heavy lifting and contact sports for at least 3–4 weeks to prevent spleen injury.
+
+---
+
+### 7. Diet
+*   **Hydration:** This is the most critical factor. Drink water, herbal teas, or oral rehydration salts (like Pedialyte) to replace lost electrolytes.
+*   **Light Meals:** If experiencing nausea, follow the **BRAT diet** (Bananas, Rice, Applesauce, Toast).
+*   **Immune Support:** Focus on vitamin-C-rich fruits (oranges, strawberries) and zinc-rich foods (poultry, nuts) once your appetite returns.
+*   **Avoid:** Alcohol, caffeine, and heavy, greasy foods which can worsen dehydration and lethargy.
+
+---
+
+### 8. Suggested Medical Diagnosis (Tests)
+To narrow down the cause of the fever, a doctor may recommend:
+1.  **CBC (Complete Blood Count):** To check white blood cell levels (high for bacterial, low or specific types for viral).
+2.  **COVID-19 / Influenza PCR Swab:** To rule out common respiratory viruses.
+3.  **Monospot Test:** To check for Infectious Mononucleosis.
+4.  **Urinalysis:** To rule out a urinary tract or kidney infection.
+5.  **Rapid Strep Test:** If a sore throat is present.
+6.  **CRP (C-Reactive Protein):** To measure the level of inflammation in the body.

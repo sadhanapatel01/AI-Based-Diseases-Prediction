@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Medical Records & EHR Archive - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 1040px; margin: 0 auto;">
+  
+  <!-- Hospital Records Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+          <span class="triage-level-badge"><i class="fa-solid fa-folder-open"></i> Hospital EHR Medical Records</span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Department of Health Information Management</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.3rem;">
+          Patient Medical Chart & Interaction Vault
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+          Archived clinical assessments, diagnostic intake notes, pharmaceutical monographs, and PACS radiology studies.
+        </p>
+      </div>
+
+      <span class="physician-badge">
+        <i class="fa-solid fa-folder-tree"></i> Central Hospital EHR Archive
+      </span>
+    </div>
+  </div>
+
+  <!-- Filter & Department Selector -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem; padding: 1rem 1.4rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+      <button onclick="filterHistory('all')" id="btn-all" class="btn-hospital-primary" style="padding: 0.4rem 0.85rem; font-size: 0.82rem;">All Records ({{ diagnosis_history|length + medicine_history|length + image_history|length + chatbot_history|length }})</button>
+      <button onclick="filterHistory('diagnosis')" id="btn-diagnosis" class="btn-hospital-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.82rem;"><i class="fa-solid fa-stethoscope"></i> Triage Notes ({{ diagnosis_history|length }})</button>
+      <button onclick="filterHistory('medicine')" id="btn-medicine" class="btn-hospital-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.82rem;"><i class="fa-solid fa-prescription-bottle-medical"></i> Pharmacy ({{ medicine_history|length }})</button>
+      <button onclick="filterHistory('image')" id="btn-image" class="btn-hospital-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.82rem;"><i class="fa-solid fa-x-ray"></i> PACS Radiology ({{ image_history|length }})</button>
+      <button onclick="filterHistory('chat')" id="btn-chat" class="btn-hospital-secondary" style="padding: 0.4rem 0.85rem; font-size: 0.82rem;"><i class="fa-solid fa-comments"></i> Rounds ({{ chatbot_history|length }})</button>
+    </div>
+
+    <div style="font-size: 0.82rem; color: var(--text-muted);">
+      <i class="fa-solid fa-shield-halved" style="color: var(--clinical-green);"></i> Authenticated: Dr. {{ session.get('user_name') }}
+    </div>
+  </div>
+
+  <!-- Records Container -->
+  <div id="history-container" style="display: flex; flex-direction: column; gap: 1rem;">
+    
+    <!-- Diagnosis Records -->
+    {% for item in diagnosis_history %}
+    <div class="hospital-card history-item" data-category="diagnosis" style="padding: 1.4rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="dept-icon"><i class="fa-solid fa-stethoscope"></i></div>
+          <div>
+            <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--hospital-navy);">Inpatient Triage Diagnostic Evaluation</h4>
+            <span style="font-size: 0.76rem; color: var(--text-muted); font-family: monospace;">{{ item.filename }}</span>
+          </div>
+        </div>
+        <a href="{{ url_for('download_interaction', interaction_type='diagnosis', filename=item.filename) }}" class="btn-hospital-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+          <i class="fa-solid fa-download"></i> Download Chart Note
+        </a>
+      </div>
+      <div class="clinical-chart-box" style="max-height: 160px; overflow-y: auto; font-size: 0.84rem; padding: 0.85rem;">{{ item.content }}</div>
+    </div>
+    {% endfor %}
+
+    <!-- Medicine Records -->
+    {% for item in medicine_history %}
+    <div class="hospital-card history-item" data-category="medicine" style="padding: 1.4rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="dept-icon" style="background: var(--hospital-teal-light); color: var(--hospital-teal-dark);"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+          <div>
+            <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--hospital-navy);">Hospital Formulary Monograph</h4>
+            <span style="font-size: 0.76rem; color: var(--text-muted); font-family: monospace;">{{ item.filename }}</span>
+          </div>
+        </div>
+        <a href="{{ url_for('download_interaction', interaction_type='medicine', filename=item.filename) }}" class="btn-hospital-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+          <i class="fa-solid fa-download"></i> Download Monograph
+        </a>
+      </div>
+      <div class="clinical-chart-box" style="max-height: 160px; overflow-y: auto; font-size: 0.84rem; padding: 0.85rem; border-left-color: var(--hospital-teal);">{{ item.content }}</div>
+    </div>
+    {% endfor %}
+
+    <!-- Image Analysis Records -->
+    {% for item in image_history %}
+    <div class="hospital-card history-item" data-category="image" style="padding: 1.4rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="dept-icon" style="background: #e0e7ff; color: #3730a3;"><i class="fa-solid fa-x-ray"></i></div>
+          <div>
+            <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--hospital-navy);">PACS Radiology Diagnostic Study</h4>
+            <span style="font-size: 0.76rem; color: var(--text-muted); font-family: monospace;">{{ item.filename }}</span>
+          </div>
+        </div>
+        <a href="{{ url_for('download_interaction', interaction_type='image', filename=item.filename) }}" class="btn-hospital-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+          <i class="fa-solid fa-download"></i> Download PACS Study
+        </a>
+      </div>
+      <div class="clinical-chart-box" style="max-height: 160px; overflow-y: auto; font-size: 0.84rem; padding: 0.85rem; border-left-color: #6366f1;">{{ item.content }}</div>
+    </div>
+    {% endfor %}
+
+    <!-- Chat Records -->
+    {% for item in chatbot_history %}
+    <div class="hospital-card history-item" data-category="chat" style="padding: 1.4rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="dept-icon" style="background: var(--hospital-blue-light); color: var(--hospital-blue-dark);"><i class="fa-solid fa-comments"></i></div>
+          <div>
+            <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--hospital-navy);">Physician Rounds Consultation Record</h4>
+            <span style="font-size: 0.76rem; color: var(--text-muted); font-family: monospace;">{{ item.filename }}</span>
+          </div>
+        </div>
+        <a href="{{ url_for('download_interaction', interaction_type='chat', filename=item.filename) }}" class="btn-hospital-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.78rem;">
+          <i class="fa-solid fa-download"></i> Download Rounds Log
+        </a>
+      </div>
+      <div class="clinical-chart-box" style="max-height: 160px; overflow-y: auto; font-size: 0.84rem; padding: 0.85rem;">{{ item.content }}</div>
+    </div>
+    {% endfor %}
+
+    {% if not diagnosis_history and not medicine_history and not image_history and not chatbot_history %}
+    <div class="hospital-card" style="text-align: center; padding: 3rem 1.5rem;">
+      <i class="fa-regular fa-folder-open" style="font-size: 2.8rem; color: var(--text-dim); margin-bottom: 0.8rem; display: block;"></i>
+      <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--hospital-navy); margin-bottom: 0.3rem;">No Archived Patient Records in Current Chart</h3>
+      <p style="color: var(--text-secondary); font-size: 0.86rem; max-width: 460px; margin: 0 auto 1.3rem;">
+        Clinical triage evaluations, formulary lookups, and PACS imaging studies will automatically be archived to your EHR chart.
+      </p>
+      <a href="{{ url_for('diagnosis_index') }}" class="btn-hospital-primary">
+        <i class="fa-solid fa-stethoscope"></i> Initiate First Diagnostic Intake
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function filterHistory(cat) {
+    const items = document.querySelectorAll('.history-item');
+    const buttons = ['all', 'diagnosis', 'medicine', 'image', 'chat'];
+
+    buttons.forEach(b => {
+      const btn = document.getElementById(`btn-${b}`);
+      if (btn) {
+        if (b === cat) {
+          btn.className = 'btn-hospital-primary';
+        } else {
+          btn.className = 'btn-hospital-secondary';
+        }
+      }
+    });
+
+    items.forEach(item => {
+      if (cat === 'all' || item.getAttribute('data-category') === cat) {
+        item.style.display = 'block';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+Timestamp: 2026-09-30_08-44-58
+========================================
+Clinical Input / Inquiry:
+ML Prediction: Acne
+Selected Symptoms (5): muscle_wasting, burning_micturition, cold_hands_and_feets, restlessness, scurring
+Gender: Male, Age: 42, Diabetes: no, History: none
+
+Clinical Evaluation & Recommendations:
+### ML Prediction
+**Primary Predicted Disease:** Acne
+**Number of Symptoms:** 5
+**Model:** Random Forest
+
+### Gemini Clinical Explanation
+Error communicating with clinical AI engine: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}

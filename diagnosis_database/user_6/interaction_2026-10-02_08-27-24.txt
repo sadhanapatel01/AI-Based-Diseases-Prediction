@@ -1,0 +1,15 @@
+Timestamp: 2026-10-02_08-27-24
+========================================
+Clinical Input / Inquiry:
+ML Prediction: Fungal infection
+Selected Symptoms (1): itching
+Gender: Male, Age: 30, Diabetes: no, History: none
+
+Clinical Evaluation & Recommendations:
+### ML Prediction
+**Primary Predicted Disease:** Fungal infection
+**Number of Symptoms:** 1
+**Model:** Random Forest
+
+### Gemini Clinical Explanation
+Stubbed explanation

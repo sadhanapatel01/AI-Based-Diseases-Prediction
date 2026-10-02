@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Hospital Formulary Monograph - {{ medicine_name }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+  
+  <!-- Hospital Pharmacy Monograph Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem; background: #ffffff; border-top: 4px solid var(--hospital-teal);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--hospital-border-light); padding-bottom: 1rem; margin-bottom: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+          <span class="triage-level-badge" style="background: var(--hospital-teal-light); color: var(--hospital-teal-dark); border-color: rgba(13, 148, 136, 0.3);">
+            <i class="fa-solid fa-pills"></i> Hospital Formulary Monograph
+          </span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Drug Order Reference</span>
+        </div>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.2rem;">
+          Pharmaceutical Monograph: {{ medicine_name }}
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">
+          Classification: {{ search_by | capitalize }} Formulary Entry &bull; Inpatient Pharmacy Verification
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.6rem; align-items: center;">
+        <button onclick="copyResults()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-regular fa-copy" id="copyIcon"></i> <span id="copyText">Copy Monograph</span>
+        </button>
+        <button onclick="window.print()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-solid fa-print"></i> Print Rx Sheet
+        </button>
+        <a href="{{ url_for('medicine_index') }}" class="btn-hospital-primary" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+          <i class="fa-solid fa-magnifying-glass"></i> New Formulary Search
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Pharmacological Bar -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; background: var(--hospital-bg-subtle); padding: 0.85rem 1.2rem; border-radius: var(--radius-sm); font-size: 0.84rem;">
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">TARGET COMPOUND</span>
+        <strong>{{ medicine_name }}</strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">SEARCH MODE</span>
+        <strong>{{ search_by | capitalize }} Name</strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">FORMULARY STATUS</span>
+        <strong style="color: var(--clinical-green);">Approved for Inpatient Use</strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">DISPENSARY VERIFICATION</span>
+        <strong style="color: var(--hospital-blue-dark);">Hospital Clinical Pharmacy</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Monograph Body -->
+  <div class="hospital-card" style="padding: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--hospital-border-light); padding-bottom: 0.8rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--hospital-navy); display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-prescription" style="color: var(--hospital-teal);"></i> Clinical Pharmacology, Dosage & Administration
+      </h3>
+      <span class="physician-badge">
+        <i class="fa-solid fa-circle-check"></i> Verified Hospital Monograph
+      </span>
+    </div>
+
+    <div id="resultsText" class="clinical-chart-box" style="border-left-color: var(--hospital-teal);">{{ info }}</div>
+
+    <!-- Hospital Inpatient Pharmacy Alert -->
+    <div style="margin-top: 1.8rem; background: var(--clinical-amber-light); border: 1px solid rgba(217, 119, 6, 0.3); border-radius: var(--radius-sm); padding: 1.1rem 1.4rem; display: flex; align-items: flex-start; gap: 0.8rem; font-size: 0.84rem; color: #92400e;">
+      <i class="fa-solid fa-triangle-exclamation" style="margin-top: 2px; font-size: 1.1rem;"></i>
+      <div>
+        <strong>Hospital Pharmacy Inpatient Advisory:</strong> Verify patient serum creatinine, liver function tests (LFTs), and known drug allergies prior to dispensing. Always consult current institutional dosing protocols for high-alert medications (anticoagulants, opioids, insulins, aminoglycosides).
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function copyResults() {
+    const text = document.getElementById('resultsText').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const copyText = document.getElementById('copyText');
+      const copyIcon = document.getElementById('copyIcon');
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check';
+      setTimeout(() => {
+        copyText.innerText = 'Copy Monograph';
+        copyIcon.className = 'fa-regular fa-copy';
+      }, 2000);
+    });
+  }
+</script>
+{% endblock %}

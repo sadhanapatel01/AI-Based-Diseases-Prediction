@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Hospital Formulary & Pharmacy - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 960px; margin: 0 auto;">
+  
+  <!-- Hospital Pharmacy Department Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+          <span class="triage-level-badge" style="background: var(--hospital-teal-light); color: var(--hospital-teal-dark); border-color: rgba(13, 148, 136, 0.3);">
+            <i class="fa-solid fa-prescription-bottle-medical"></i> Inpatient Pharmacy & Dispensary
+          </span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Division of Clinical Pharmacology</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.3rem;">
+          Hospital Formulary & Medication Guide
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+          Query hospital pharmaceuticals, dosing protocols, drug-drug contraindications, and pediatric/geriatric safety profiles.
+        </p>
+      </div>
+
+      <div style="text-align: right;">
+        <span class="physician-badge">
+          <i class="fa-solid fa-pills"></i> Inpatient Formulary
+        </span>
+        <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.4rem;">Clinical Pharmacology AI &bull; Gemini 2.5 Flash</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Card -->
+  <div class="hospital-card">
+    <form method="POST" action="{{ url_for('medicine_index') }}">
+      
+      <!-- Search Classification -->
+      <div style="margin-bottom: 1.6rem;">
+        <label class="form-label" style="margin-bottom: 0.5rem;">
+          <i class="fa-solid fa-filter" style="color: var(--hospital-blue);"></i> Formulary Search Classification
+        </label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <label style="cursor: pointer;">
+            <input type="radio" name="search_by" value="generic" id="search_generic" style="display: none;" checked onchange="updateSearchMode('generic')" />
+            <div id="tab_generic" style="padding: 1rem; border: 2px solid var(--hospital-blue); background: var(--hospital-blue-light); border-radius: var(--radius-sm); text-align: center;">
+              <i class="fa-solid fa-dna" style="font-size: 1.3rem; color: var(--hospital-blue-dark); margin-bottom: 0.3rem; display: block;"></i>
+              <strong style="color: var(--hospital-navy); font-size: 0.98rem;">Generic Active Substance (INN)</strong>
+              <span style="font-size: 0.76rem; color: var(--text-secondary); display: block;">e.g. Paracetamol, Metformin, Ceftriaxone</span>
+            </div>
+          </label>
+
+          <label style="cursor: pointer;">
+            <input type="radio" name="search_by" value="brand" id="search_brand" style="display: none;" onchange="updateSearchMode('brand')" />
+            <div id="tab_brand" style="padding: 1rem; border: 1px solid var(--hospital-surface-border); background: #ffffff; border-radius: var(--radius-sm); text-align: center;">
+              <i class="fa-solid fa-trademark" style="font-size: 1.3rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block;"></i>
+              <strong style="color: var(--hospital-navy); font-size: 0.98rem;">Hospital Commercial Brand</strong>
+              <span style="font-size: 0.76rem; color: var(--text-secondary); display: block;">e.g. Tylenol, Glucophage, Rocephin</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Drug Name Input -->
+      <div class="form-group">
+        <label class="form-label" for="name">
+          <i class="fa-solid fa-magnifying-glass" style="color: var(--hospital-blue);"></i> Medication or Pharmacological Agent
+        </label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          class="form-control-custom" 
+          placeholder="Enter generic or proprietary name (e.g., Amoxicillin, Enoxaparin, Atorvastatin)..." 
+          value="{{ form_data.get('name', '') if form_data else '' }}"
+          required 
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Quick Hospital Formulary Presets -->
+      <div style="margin-bottom: 1.5rem;">
+        <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; margin-right: 0.5rem;">Common Inpatient Presets:</span>
+        <div style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.35rem;">
+          <button type="button" onclick="setMedName('Metformin')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Metformin</button>
+          <button type="button" onclick="setMedName('Ceftriaxone')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Ceftriaxone</button>
+          <button type="button" onclick="setMedName('Atorvastatin')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Atorvastatin</button>
+          <button type="button" onclick="setMedName('Heparin')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Heparin</button>
+          <button type="button" onclick="setMedName('Omeprazole')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Omeprazole</button>
+        </div>
+      </div>
+
+      <!-- Regulatory Jurisdiction -->
+      <div id="country_container" class="form-group">
+        <label class="form-label" for="country">
+          <i class="fa-solid fa-building-columns" style="color: var(--hospital-blue);"></i> Pharmacopeia Standards Authority
+        </label>
+        <select id="country" name="country" class="form-control-custom">
+          <option value="US" {% if form_data and form_data.country == 'US' %}selected{% endif %}>United States (FDA / USP Formulary)</option>
+          <option value="UK" {% if form_data and form_data.country == 'UK' %}selected{% endif %}>United Kingdom (NHS / BNF / MHRA)</option>
+          <option value="EU" {% if form_data and form_data.country == 'EU' %}selected{% endif %}>European Union (EMA Standards)</option>
+          <option value="IN" {% if form_data and form_data.country == 'IN' %}selected{% endif %}>India (CDSCO / Indian Pharmacopoeia)</option>
+          <option value="CA" {% if form_data and form_data.country == 'CA' %}selected{% endif %}>Canada (Health Canada)</option>
+          <option value="AU" {% if form_data and form_data.country == 'AU' %}selected{% endif %}>Australia (TGA / PBS)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.8rem; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--hospital-border-light); padding-top: 1.2rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">
+          <i class="fa-solid fa-hospital"></i> Metropolitan Hospital Pharmacy Formulary &bull; Inpatient Formulary System
+        </span>
+        <button type="submit" class="btn-hospital-primary" style="padding: 0.75rem 2rem;">
+          <i class="fa-solid fa-book-medical"></i> Retrieve Formulary Monograph
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function updateSearchMode(mode) {
+    const tabGen = document.getElementById('tab_generic');
+    const tabBrand = document.getElementById('tab_brand');
+
+    if (mode === 'generic') {
+      tabGen.style.border = '2px solid var(--hospital-blue)';
+      tabGen.style.background = 'var(--hospital-blue-light)';
+      tabGen.querySelector('i').style.color = 'var(--hospital-blue-dark)';
+
+      tabBrand.style.border = '1px solid var(--hospital-surface-border)';
+      tabBrand.style.background = '#ffffff';
+      tabBrand.querySelector('i').style.color = 'var(--text-muted)';
+    } else {
+      tabBrand.style.border = '2px solid var(--hospital-blue)';
+      tabBrand.style.background = 'var(--hospital-blue-light)';
+      tabBrand.querySelector('i').style.color = 'var(--hospital-blue-dark)';
+
+      tabGen.style.border = '1px solid var(--hospital-surface-border)';
+      tabGen.style.background = '#ffffff';
+      tabGen.querySelector('i').style.color = 'var(--text-muted)';
+    }
+  }
+
+  function setMedName(name) {
+    document.getElementById('name').value = name;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,15 @@
+Timestamp: 2026-09-30_08-57-30
+========================================
+Clinical Input / Inquiry:
+ML Prediction: Allergy
+Selected Symptoms (5): continuous_sneezing, fatigue, weight_gain, anxiety, belly_pain
+Gender: Male, Age: 42, Diabetes: no, History: none
+
+Clinical Evaluation & Recommendations:
+### ML Prediction
+**Primary Predicted Disease:** Allergy
+**Number of Symptoms:** 5
+**Model:** Random Forest
+
+### Gemini Clinical Explanation
+Error communicating with clinical AI engine: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).', 'status': 'NOT_FOUND'}}

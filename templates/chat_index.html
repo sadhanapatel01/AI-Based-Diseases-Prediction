@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Physician Rounds & Decision Support - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 960px; margin: 0 auto;">
+  
+  <!-- Hospital Rounds Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+          <span class="triage-level-badge" style="background: var(--hospital-blue-light); color: var(--hospital-blue-dark); border-color: rgba(2, 132, 199, 0.3);">
+            <i class="fa-solid fa-user-doctor"></i> Clinical Decision Support
+          </span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Physician AI Consult</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.3rem;">
+          Attending Physician Clinical Rounds
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+          Consult on inpatient medical cases, pathophysiological pathways, complex multi-drug regimens, and molecular target interactions.
+        </p>
+      </div>
+
+      <div style="text-align: right;">
+        <span class="physician-badge">
+          <i class="fa-solid fa-user-doctor"></i> Inpatient Rounds
+        </span>
+        <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.4rem;">Clinical AI Support &bull; Gemini 2.5 Flash</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consultation Form -->
+  <div class="hospital-card">
+    <form method="POST" action="{{ url_for('chatbot') }}">
+      
+      <!-- Primary Clinical Prompt -->
+      <div class="form-group" style="margin-bottom: 1.4rem;">
+        <label class="form-label" for="prompt">
+          <i class="fa-solid fa-comment-medical" style="color: var(--hospital-blue);"></i> Physician Case Consultation Question
+        </label>
+        <textarea 
+          id="prompt" 
+          name="prompt" 
+          class="form-control-custom" 
+          placeholder="Enter clinical case question or management dilemma (e.g., What are the hemodynamic and electrolyte indications for adjusting ACE inhibitors vs ARBs in hospitalized diabetic nephropathy patients?)..."
+          required
+          style="min-height: 110px;"
+        >{{ form_data.get('prompt', '') if form_data else '' }}</textarea>
+      </div>
+
+      <!-- Quick Suggested Hospital Case Questions -->
+      <div style="margin-bottom: 1.4rem;">
+        <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; margin-right: 0.5rem;">Hospital Case Queries:</span>
+        <div style="display: inline-flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.3rem;">
+          <button type="button" onclick="setPrompt('What is the ICU management protocol and fluid resuscitation algorithm for septic shock in a patient with reduced ejection fraction?')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Sepsis + Low EF Protocol</button>
+          <button type="button" onclick="setPrompt('Explain the pharmacological rationale and bleeding risk of dual antiplatelet therapy vs triple therapy post-PCI with atrial fibrillation.')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">DAPT in Atrial Fibrillation</button>
+          <button type="button" onclick="setPrompt('Provide the diagnostic differential and workup steps for unexplained hypercalcemia in a hospitalized adult.')" class="btn-hospital-secondary" style="padding: 0.2rem 0.6rem; font-size: 0.76rem;">Hypercalcemia Workup</button>
+        </div>
+      </div>
+
+      <!-- Context Specialty -->
+      <div class="form-group" style="margin-bottom: 1.4rem;">
+        <label class="form-label" for="topic">
+          <i class="fa-solid fa-hospital-user" style="color: var(--hospital-blue);"></i> Clinical Specialty or Inpatient Service (Optional)
+        </label>
+        <input 
+          type="text" 
+          id="topic" 
+          name="topic" 
+          class="form-control-custom" 
+          placeholder="e.g. Cardiology, Intensive Care (ICU), Nephrology, Infectious Disease, Oncology..." 
+          value="{{ form_data.get('topic', '') if form_data else '' }}"
+        />
+      </div>
+
+      <!-- Molecular Context Block -->
+      <div style="margin-bottom: 1.6rem; background: var(--hospital-bg-subtle); border: 1px solid var(--hospital-surface-border); border-radius: var(--radius-sm); padding: 1.1rem 1.3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+          <label class="form-label" style="margin-bottom: 0;">
+            <i class="fa-solid fa-circle-nodes" style="color: var(--hospital-blue);"></i> Biochemical / Target Ligands & Properties (Optional)
+          </label>
+          <button type="button" onclick="addMoleculeField()" class="btn-hospital-secondary" style="padding: 0.25rem 0.65rem; font-size: 0.76rem;">
+            <i class="fa-solid fa-plus"></i> Add Compound
+          </button>
+        </div>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.8rem;">
+          Add specific pharmacological agents or molecular targets to simulate binding affinities or receptor interactions.
+        </p>
+        
+        <input type="hidden" id="num-molecules" name="num-molecules" value="0" />
+        <div id="molecules-container" style="display: flex; flex-direction: column; gap: 0.65rem;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.8rem; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--hospital-border-light); padding-top: 1.2rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">
+          <i class="fa-solid fa-hospital-user"></i> Metropolitan General Hospital &bull; Inpatient Clinical Service
+        </span>
+        <button type="submit" class="btn-hospital-primary" style="padding: 0.75rem 2rem;">
+          <i class="fa-solid fa-paper-plane"></i> Submit Clinical Query
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let molCount = 0;
+
+  function addMoleculeField() {
+    molCount++;
+    document.getElementById('num-molecules').value = molCount;
+
+    const container = document.getElementById('molecules-container');
+    const row = document.createElement('div');
+    row.id = `molecule-row-${molCount}`;
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr 1fr auto';
+    row.style.gap = '0.65rem';
+    row.style.alignItems = 'center';
+
+    row.innerHTML = `
+      <input type="text" name="molecule-${molCount}" class="form-control-custom" placeholder="Compound Name (e.g. Enoxaparin)" required />
+      <input type="text" name="property-${molCount}" class="form-control-custom" placeholder="Target Property (e.g. Factor Xa inhibition)" required />
+      <button type="button" onclick="removeMoleculeField(${molCount})" class="btn-hospital-secondary" style="color: var(--clinical-red); border-color: rgba(220, 38, 38, 0.3); padding: 0.55rem 0.75rem;">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    `;
+    container.appendChild(row);
+  }
+
+  function removeMoleculeField(idx) {
+    const row = document.getElementById(`molecule-row-${idx}`);
+    if (row) row.remove();
+  }
+
+  function setPrompt(text) {
+    document.getElementById('prompt').value = text;
+  }
+</script>
+{% endblock %}

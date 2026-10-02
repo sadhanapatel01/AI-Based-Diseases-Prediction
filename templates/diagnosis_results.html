@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Clinical Progress Note - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+  
+  <!-- Hospital EHR Note Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem; background: #ffffff; border-top: 4px solid var(--hospital-blue);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--hospital-border-light); padding-bottom: 1rem; margin-bottom: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+          <span class="triage-level-badge"><i class="fa-solid fa-file-signature"></i> Official Hospital Progress Note</span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">EHR Record #MGH-8941</span>
+        </div>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.2rem;">
+          Inpatient & Triage Clinical Evaluation Note
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">
+          Metropolitan General Hospital &bull; Department of Medicine & Triage &bull; Gemini 2.5 Flash Engine
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.6rem; align-items: center;">
+        <button onclick="copyResults()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-regular fa-copy" id="copyIcon"></i> <span id="copyText">Copy Chart Note</span>
+        </button>
+        <button onclick="window.print()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-solid fa-print"></i> Print Note
+        </button>
+        <a href="{{ url_for('diagnosis_index') }}" class="btn-hospital-primary" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+          <i class="fa-solid fa-user-plus"></i> New Patient Intake
+        </a>
+      </div>
+    </div>
+
+    <!-- Patient Header Table Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; background: var(--hospital-bg-subtle); padding: 0.85rem 1.2rem; border-radius: var(--radius-sm); font-size: 0.84rem;">
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">PATIENT DEMOGRAPHICS</span>
+        <strong>{{ gender }}, {{ age }} Years</strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">DIABETIC STATUS</span>
+        <strong>{{ diabetes | capitalize }}</strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">PREVIOUS COMORBIDITIES</span>
+        <strong>{{ previous_diseases }}</strong>
+      </div>
+      <div>
+        <span style="color: var(--text-muted); display: block; font-size: 0.75rem;">ATTENDING PHYSICIAN</span>
+        <strong style="color: var(--hospital-blue-dark);">Dr. {{ session.get('user_name') }}</strong>
+      </div>
+    </div>
+  </div>
+
+  {% if ml_prediction %}
+  <!-- Primary ML Disease Prediction -->
+  <div class="hospital-card" style="padding: 1.4rem 1.6rem; margin-bottom: 1.5rem; border-left: 5px solid var(--hospital-blue);">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:0.9rem;">
+      <h2 style="font-size:1.15rem; font-weight:800; color:var(--hospital-navy); margin:0;">
+        <i class="fa-solid fa-brain" style="color:var(--hospital-blue);"></i> ML Prediction Result
+      </h2>
+      <span class="physician-badge"><i class="fa-solid fa-tree"></i> {{ ml_model_name }}</span>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:0.8rem;">
+      <div style="background:var(--hospital-bg-subtle); padding:1rem; border-radius:var(--radius-sm);">
+        <span style="display:block; font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Predicted Disease</span>
+        <strong style="display:block; margin-top:0.25rem; color:var(--hospital-navy); font-size:1.05rem;">{{ ml_prediction }}</strong>
+      </div>
+      <div style="background:var(--hospital-bg-subtle); padding:1rem; border-radius:var(--radius-sm);">
+        <span style="display:block; font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Number of Symptoms</span>
+        <strong style="display:block; margin-top:0.25rem; color:var(--hospital-navy); font-size:1.05rem;">{{ symptom_count }}</strong>
+      </div>
+      <div style="background:var(--hospital-bg-subtle); padding:1rem; border-radius:var(--radius-sm);">
+        <span style="display:block; font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Model</span>
+        <strong style="display:block; margin-top:0.25rem; color:var(--hospital-navy); font-size:1.05rem;">{{ ml_model_name }}</strong>
+      </div>
+    </div>
+    {% if selected_symptoms %}
+    <div style="margin-top:0.9rem; font-size:0.8rem; color:var(--text-secondary);">
+      <strong>Selected symptoms:</strong> {{ selected_symptoms|join(', ') }}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Primary SOAP / Clinical Progress Note Body -->
+  <div class="hospital-card" style="padding: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--hospital-border-light); padding-bottom: 0.8rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--hospital-navy); display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-clipboard-list" style="color: var(--hospital-blue);"></i> Physician Differential Diagnosis & Action Plan
+      </h3>
+      <span class="physician-badge">
+        <i class="fa-solid fa-circle-check"></i> Clinical AI Validated
+      </span>
+    </div>
+
+    <!-- Chart Text Display -->
+    <div id="resultsText" class="clinical-chart-box">{{ insights }}</div>
+
+    <!-- Physician Attestation & Sign-off Box -->
+    <div style="margin-top: 1.8rem; background: var(--hospital-bg-subtle); border: 1px solid var(--hospital-surface-border); border-radius: var(--radius-sm); padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Physician Electronic Attestation</div>
+        <div style="font-size: 0.95rem; font-weight: 700; color: var(--hospital-navy); margin-top: 0.2rem;">
+          Digitally Signed: <span style="color: var(--hospital-blue-dark);">Dr. {{ session.get('user_name') }}</span> (Attending Clinician)
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary);">Metropolitan General Hospital EMR &bull; Verified Chart Progress Note</div>
+      </div>
+      <div style="text-align: right;">
+        <span class="triage-level-badge" style="background: var(--clinical-green-light); color: var(--clinical-green); border-color: rgba(22, 163, 74, 0.3);">
+          <i class="fa-solid fa-check"></i> Chart Finalized
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function copyResults() {
+    const text = document.getElementById('resultsText').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const copyText = document.getElementById('copyText');
+      const copyIcon = document.getElementById('copyIcon');
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check';
+      setTimeout(() => {
+        copyText.innerText = 'Copy Chart Note';
+        copyIcon.className = 'fa-regular fa-copy';
+      }, 2000);
+    });
+  }
+</script>
+{% endblock %}

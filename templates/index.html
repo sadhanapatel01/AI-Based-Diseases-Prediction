@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Clinical Workstation - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<!-- Hospital Ward & Clinical Station Hero -->
+<section class="hospital-hero-card">
+  <div>
+    <div class="hospital-hero-badge-row">
+      <span class="physician-badge">
+        <i class="fa-solid fa-hospital-user"></i> Department of Medicine & Triage
+      </span>
+      <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">
+        <i class="fa-solid fa-shield-check"></i> Clinical Decision Support System
+      </span>
+    </div>
+
+    <h1 class="hospital-hero-title">
+      Hospital Clinical <span>Decision Support</span> Workstation
+    </h1>
+    <p class="hospital-hero-desc">
+      Metropolitan General Hospital's unified clinical artificial intelligence portal. Assisting attending physicians, residents, and nursing teams with automated differential diagnosis synthesis, pharmaceutical formulary checks, and PACS imaging triage.
+    </p>
+
+    <div class="hero-actions">
+      <a href="{{ url_for('diagnosis_index') }}" class="btn-hospital-primary">
+        <i class="fa-solid fa-stethoscope"></i> Triage & Diagnostic Intake
+      </a>
+      <a href="{{ url_for('image_analysis') }}" class="btn-hospital-secondary">
+        <i class="fa-solid fa-x-ray"></i> PACS Radiology Viewer
+      </a>
+      <a href="{{ url_for('history') }}" class="btn-hospital-secondary">
+        <i class="fa-solid fa-folder-open"></i> Inpatient Patient Records
+      </a>
+    </div>
+  </div>
+
+  <div class="hospital-hero-image-box">
+    <img src="{{ url_for('static', filename='img/hero_banner.jpg') }}" alt="Hospital Consultation Station" />
+  </div>
+</section>
+
+<!-- Hospital Clinical Departments & Wards -->
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+  <div>
+    <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--hospital-navy);">Hospital Clinical Services</h2>
+    <p style="color: var(--text-muted); font-size: 0.88rem;">Select a hospital department module to begin patient evaluation</p>
+  </div>
+  <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem; color: var(--hospital-blue-dark); font-weight: 600;">
+    <i class="fa-solid fa-shield-halved"></i> HIPAA &bull; SQLite Protected &bull; Pydantic Verified
+  </div>
+</div>
+
+<div class="departments-grid">
+  <!-- Dept 1: Triage & Diagnosis -->
+  <a href="{{ url_for('diagnosis_index') }}" class="dept-card">
+    <div class="dept-image-box">
+      <img src="{{ url_for('static', filename='img/diagnosis_visual.jpg') }}" alt="Hospital Triage Department" />
+      <span class="dept-tag"><i class="fa-solid fa-truck-medical"></i> Emergency & OPD</span>
+    </div>
+    <div class="dept-body">
+      <div class="dept-title-row">
+        <div class="dept-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+        <h3 class="dept-title">Triage & Diagnosis</h3>
+      </div>
+      <p class="dept-desc">
+        Emergency & outpatient differential diagnosis, patient symptom intake, clinical triage prioritization, and diagnostic lab recommendations.
+      </p>
+      <div class="dept-action">
+        <span>Enter Triage Bay</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+    </div>
+  </a>
+
+  <!-- Dept 2: Pharmacy & Inpatient Formulary -->
+  <a href="{{ url_for('medicine_index') }}" class="dept-card">
+    <div class="dept-image-box">
+      <img src="{{ url_for('static', filename='img/medicine_visual.jpg') }}" alt="Hospital Inpatient Pharmacy" />
+      <span class="dept-tag"><i class="fa-solid fa-pills"></i> Dispensary</span>
+    </div>
+    <div class="dept-body">
+      <div class="dept-title-row">
+        <div class="dept-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+        <h3 class="dept-title">Hospital Pharmacy</h3>
+      </div>
+      <p class="dept-desc">
+        Hospital drug formulary queries, clinical pharmacokinetics, contraindications, pediatric/adult dosing regimens, and drug-drug interactions.
+      </p>
+      <div class="dept-action">
+        <span>Search Formulary</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+    </div>
+  </a>
+
+  <!-- Dept 3: PACS Radiology Reading Room -->
+  <a href="{{ url_for('image_analysis') }}" class="dept-card">
+    <div class="dept-image-box">
+      <img src="{{ url_for('static', filename='img/vision_visual.jpg') }}" alt="Hospital Radiology PACS" />
+      <span class="dept-tag"><i class="fa-solid fa-radiation"></i> Radiology PACS</span>
+    </div>
+    <div class="dept-body">
+      <div class="dept-title-row">
+        <div class="dept-icon"><i class="fa-solid fa-x-ray"></i></div>
+        <h3 class="dept-title">PACS Radiology</h3>
+      </div>
+      <p class="dept-desc">
+        Multimodal radiographic reading for chest/skeletal X-rays, dermatological oncology scans, ultrasound sonography, and pathology imaging.
+      </p>
+      <div class="dept-action">
+        <span>Review Imaging Scan</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+    </div>
+  </a>
+
+  <!-- Dept 4: Physician Rounds & AI Consultation -->
+  <a href="{{ url_for('chatbot') }}" class="dept-card">
+    <div class="dept-image-box" style="background: linear-gradient(135deg, #0284c7, #0f172a); display: flex; align-items: center; justify-content: center;">
+      <div style="font-size: 3.5rem; color: #ffffff; opacity: 0.9;">
+        <i class="fa-solid fa-user-doctor"></i>
+      </div>
+      <span class="dept-tag"><i class="fa-solid fa-stethoscope"></i> Clinical Rounds</span>
+    </div>
+    <div class="dept-body">
+      <div class="dept-title-row">
+        <div class="dept-icon"><i class="fa-solid fa-comments"></i></div>
+        <h3 class="dept-title">Physician Rounds</h3>
+      </div>
+      <p class="dept-desc">
+        Real-time physician consultation assistant for complex pathophysiological cases, molecular target affinities, and hospital treatment algorithms.
+      </p>
+      <div class="dept-action">
+        <span>Start Clinical Consultation</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+    </div>
+  </a>
+</div>
+
+<!-- Hospital Clinical Credentials Card -->
+<div class="hospital-card" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; background: #ffffff; border-left: 4px solid var(--hospital-teal);">
+  <div style="display: flex; align-items: center; gap: 1.25rem;">
+    <div class="dept-icon" style="width: 44px; height: 44px; font-size: 1.3rem; background: var(--hospital-teal-light); color: var(--hospital-teal-dark);">
+      <i class="fa-solid fa-hospital-user"></i>
+    </div>
+    <div>
+      <h3 style="font-size: 1.08rem; font-weight: 700; color: var(--hospital-navy); margin-bottom: 0.2rem;">
+        Hospital Clinical Decision Support & PACS Network
+      </h3>
+      <p style="color: var(--text-muted); font-size: 0.84rem;">
+        Integrated with local SQLite hospital database, Pydantic type verification, and Google Gemini 2.5 Flash multimodal intelligence.
+      </p>
+    </div>
+  </div>
+  <a href="{{ url_for('history') }}" class="btn-hospital-secondary">
+    <i class="fa-solid fa-folder-tree"></i> Patient Medical Chart Vault
+  </a>
+</div>
+{% endblock %}

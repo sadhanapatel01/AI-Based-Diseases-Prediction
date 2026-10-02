@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block title %}Triage & Diagnosis - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 960px; margin: 0 auto;">
+  
+  <!-- Hospital Department Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+          <span class="triage-level-badge"><i class="fa-solid fa-hospital-user"></i> Inpatient & ER Triage</span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Department of Internal Medicine</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.3rem;">
+          Patient Diagnostic Intake & Triage
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 0.88rem;">
+          Record clinical findings, onset of symptoms, and prior medical history to generate automated differential diagnosis.
+        </p>
+      </div>
+
+      <div style="text-align: right;">
+        <span class="physician-badge">
+          <i class="fa-solid fa-stethoscope"></i> Clinical Triage Unit
+        </span>
+        <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.4rem;">Gemini 2.5 Flash Clinical Engine</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clinical Intake Form -->
+  <div class="hospital-card">
+    <form method="POST" action="{{ url_for('diagnosis_index') }}">
+      
+      <!-- Diagnostic Mode Switcher -->
+      <div style="margin-bottom: 1.6rem;">
+        <label class="form-label" style="margin-bottom: 0.5rem;">
+          <i class="fa-solid fa-stethoscope" style="color: var(--hospital-blue);"></i> Clinical Intake Pathway
+        </label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <label style="cursor: pointer;">
+            <input type="radio" name="choice" value="1" id="choice_symptoms" style="display: none;" checked onchange="toggleChoice('1')" />
+            <div id="tab_symptoms" style="padding: 1rem; border: 2px solid var(--hospital-blue); background: var(--hospital-blue-light); border-radius: var(--radius-sm); text-align: center;">
+              <i class="fa-solid fa-notes-medical" style="font-size: 1.4rem; color: var(--hospital-blue-dark); margin-bottom: 0.3rem; display: block;"></i>
+              <strong style="color: var(--hospital-navy); font-size: 1rem;">Symptom Evaluation (ER / OPD)</strong>
+              <span style="font-size: 0.78rem; color: var(--text-secondary); display: block;">Synthesize differential diagnosis from symptoms</span>
+            </div>
+          </label>
+
+          <label style="cursor: pointer;">
+            <input type="radio" name="choice" value="2" id="choice_disease" style="display: none;" onchange="toggleChoice('2')" />
+            <div id="tab_disease" style="padding: 1rem; border: 1px solid var(--hospital-surface-border); background: #ffffff; border-radius: var(--radius-sm); text-align: center;">
+              <i class="fa-solid fa-book-medical" style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block;"></i>
+              <strong style="color: var(--hospital-navy); font-size: 1rem;">Clinical Condition Protocol</strong>
+              <span style="font-size: 0.78rem; color: var(--text-secondary); display: block;">Hospital management guide for confirmed disease</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Patient Demographics Section -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.3rem;">
+        <div class="form-group">
+          <label class="form-label" for="gender">
+            <i class="fa-solid fa-venus-mars" style="color: var(--hospital-blue);"></i> Biological Sex
+          </label>
+          <select id="gender" name="gender" class="form-control-custom" required>
+            <option value="Male" {% if form_data and form_data.gender == 'Male' %}selected{% endif %}>Male</option>
+            <option value="Female" {% if form_data and form_data.gender == 'Female' %}selected{% endif %}>Female</option>
+            <option value="Other" {% if form_data and form_data.gender == 'Other' %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="age">
+            <i class="fa-solid fa-id-card-clip" style="color: var(--hospital-blue);"></i> Patient Age (Years)
+          </label>
+          <input 
+            type="number" 
+            id="age" 
+            name="age" 
+            class="form-control-custom" 
+            min="1" 
+            max="125" 
+            value="{{ form_data.get('age', '42') if form_data else '42' }}" 
+            required 
+          />
+        </div>
+      </div>
+
+      <!-- Clinical History Section -->
+      <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.2rem; margin-bottom: 1.3rem;">
+        <div class="form-group">
+          <label class="form-label" for="diabetes">
+            <i class="fa-solid fa-droplet" style="color: var(--hospital-blue);"></i> Diabetes Status
+          </label>
+          <select id="diabetes" name="diabetes" class="form-control-custom" required>
+            <option value="no" {% if form_data and form_data.diabetes == 'no' %}selected{% endif %}>Non-Diabetic</option>
+            <option value="yes" {% if form_data and form_data.diabetes == 'yes' %}selected{% endif %}>Diagnosed Diabetic</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="previous_diseases">
+            <i class="fa-solid fa-file-waveform" style="color: var(--hospital-blue);"></i> Comorbidities & Medical History
+          </label>
+          <input 
+            type="text" 
+            id="previous_diseases" 
+            name="previous_diseases" 
+            class="form-control-custom" 
+            placeholder="e.g. Hypertension, COPD, Coronary Artery Disease, None" 
+            value="{{ form_data.get('previous_diseases', 'none') if form_data else 'none' }}" 
+          />
+        </div>
+      </div>
+
+      <!-- ML Symptom Selection (Choice 1) -->
+      <div id="section_symptoms" class="form-group">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+          <label class="form-label" style="margin-bottom:0;">
+            <i class="fa-solid fa-notes-medical" style="color: var(--hospital-blue);"></i>
+            Select Patient Symptoms
+          </label>
+          <span style="font-size:0.78rem; color:var(--text-muted);">
+            {{ symptom_options|length }} symptoms from the Kaggle ML dataset
+          </span>
+        </div>
+
+        <div style="margin:0.7rem 0 1rem;">
+          <input
+            type="search"
+            id="symptomSearch"
+            class="form-control-custom"
+            placeholder="Search symptoms..."
+            oninput="filterSymptoms()"
+            aria-label="Search symptoms"
+          />
+        </div>
+
+        <div id="symptomGrid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:0.55rem; max-height:430px; overflow-y:auto; padding:0.9rem; border:1px solid var(--hospital-surface-border); border-radius:var(--radius-sm); background:var(--hospital-bg-subtle);">
+          {% for symptom in symptom_options %}
+          <label class="symptom-option" data-symptom="{{ symptom|lower }}" style="display:flex; align-items:center; gap:0.55rem; padding:0.6rem 0.7rem; background:#fff; border:1px solid var(--hospital-surface-border); border-radius:var(--radius-sm); cursor:pointer;">
+            <input
+              type="checkbox"
+              name="symptoms"
+              value="{{ symptom }}"
+              {% if symptom in selected_symptoms %}checked{% endif %}
+            />
+            <span style="font-size:0.82rem; color:var(--hospital-navy); word-break:break-word;">{{ symptom.replace('_', ' ') }}</span>
+          </label>
+          {% endfor %}
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.6rem; gap:1rem; flex-wrap:wrap;">
+          <span id="selectedCount" style="font-size:0.8rem; color:var(--text-secondary);">0 symptoms selected</span>
+          <button type="button" class="btn-hospital-secondary" onclick="clearSymptoms()" style="font-size:0.78rem; padding:0.45rem 0.8rem;">
+            Clear Symptoms
+          </button>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <label class="form-label" for="symptom_notes">
+            <i class="fa-solid fa-file-waveform" style="color:var(--hospital-blue);"></i>
+            Additional Clinical Notes <span style="font-weight:400; color:var(--text-muted);">(optional, used by Gemini)</span>
+          </label>
+          <textarea
+            id="symptom_notes"
+            name="symptom_notes"
+            class="form-control-custom"
+            placeholder="Add onset, severity, duration, or other clinical context for Gemini's explanation..."
+          >{{ form_data.get('symptoms', '') if form_data else '' }}</textarea>
+        </div>
+
+        {% if not symptom_options %}
+        <div style="margin-top:0.8rem; padding:0.8rem 1rem; border:1px solid #f59e0b; background:#fffbeb; border-radius:var(--radius-sm); color:#92400e; font-size:0.82rem;">
+          The ML model is not loaded yet. Run <strong>python train_model.py</strong> before using ML prediction.
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Disease Input (Choice 2) -->
+      <div id="section_disease" class="form-group" style="display: none;">
+        <label class="form-label" for="disease">
+          <i class="fa-solid fa-clipboard-question" style="color: var(--hospital-blue);"></i> Confirmed Diagnosis / Pathology Query
+        </label>
+        <input 
+          type="text" 
+          id="disease" 
+          name="disease" 
+          class="form-control-custom" 
+          placeholder="e.g., Community Acquired Pneumonia, Congestive Heart Failure, Acute Pancreatitis..." 
+          value="{{ form_data.get('disease', '') if form_data else '' }}" 
+        />
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.8rem; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--hospital-border-light); padding-top: 1.2rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">
+          <i class="fa-solid fa-lock"></i> Protected Health Information &bull; Certified Hospital System
+        </span>
+        <button type="submit" class="btn-hospital-primary" style="padding: 0.75rem 2rem;">
+          <i class="fa-solid fa-microscope"></i> Predict Disease
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function toggleChoice(val) {
+    const tabSymptoms = document.getElementById('tab_symptoms');
+    const tabDisease = document.getElementById('tab_disease');
+    const secSymptoms = document.getElementById('section_symptoms');
+    const secDisease = document.getElementById('section_disease');
+
+    if (val === '1') {
+      tabSymptoms.style.border = '2px solid var(--hospital-blue)';
+      tabSymptoms.style.background = 'var(--hospital-blue-light)';
+      tabSymptoms.querySelector('i').style.color = 'var(--hospital-blue-dark)';
+
+      tabDisease.style.border = '1px solid var(--hospital-surface-border)';
+      tabDisease.style.background = '#ffffff';
+      tabDisease.querySelector('i').style.color = 'var(--text-muted)';
+
+      secSymptoms.style.display = 'block';
+      secDisease.style.display = 'none';
+    } else {
+      tabDisease.style.border = '2px solid var(--hospital-blue)';
+      tabDisease.style.background = 'var(--hospital-blue-light)';
+      tabDisease.querySelector('i').style.color = 'var(--hospital-blue-dark)';
+
+      tabSymptoms.style.border = '1px solid var(--hospital-surface-border)';
+      tabSymptoms.style.background = '#ffffff';
+      tabSymptoms.querySelector('i').style.color = 'var(--text-muted)';
+
+      secSymptoms.style.display = 'none';
+      secDisease.style.display = 'block';
+    }
+  }
+
+  function filterSymptoms() {
+    const query = document.getElementById('symptomSearch').value.toLowerCase().trim();
+    document.querySelectorAll('.symptom-option').forEach(option => {
+      option.style.display = option.dataset.symptom.includes(query) ? 'flex' : 'none';
+    });
+  }
+
+  function updateSelectedCount() {
+    const count = document.querySelectorAll('input[name="symptoms"]:checked').length;
+    document.getElementById('selectedCount').innerText =
+      `${count} symptom${count === 1 ? '' : 's'} selected`;
+  }
+
+  function clearSymptoms() {
+    document.querySelectorAll('input[name="symptoms"]').forEach(input => input.checked = false);
+    updateSelectedCount();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[name="symptoms"]').forEach(input => {
+      input.addEventListener('change', updateSelectedCount);
+    });
+    updateSelectedCount();
+  });
+</script>
+{% endblock %}

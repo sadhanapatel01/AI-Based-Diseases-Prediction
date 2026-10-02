@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Physician Consultation Summary - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+  
+  <!-- Hospital Consultation Note Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem; background: #ffffff; border-top: 4px solid var(--hospital-blue);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--hospital-border-light); padding-bottom: 1rem; margin-bottom: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+          <span class="triage-level-badge"><i class="fa-solid fa-comments"></i> Inpatient Clinical Rounds</span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Consultation Note</span>
+        </div>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.2rem;">
+          Clinical Decision Support Consultation
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">
+          Metropolitan General Hospital &bull; Physician Decision Synthesis &bull; Gemini 2.5 Flash
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.6rem; align-items: center;">
+        <button onclick="copyResults()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-regular fa-copy" id="copyIcon"></i> <span id="copyText">Copy Consult</span>
+        </button>
+        <button onclick="window.print()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-solid fa-print"></i> Print Note
+        </button>
+        <a href="{{ url_for('chatbot') }}" class="btn-hospital-primary" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+          <i class="fa-solid fa-plus"></i> New Rounds Query
+        </a>
+      </div>
+    </div>
+
+    <!-- Submitted Inquiry Box -->
+    <div style="background: var(--hospital-bg-subtle); padding: 0.9rem 1.2rem; border-radius: var(--radius-sm); border-left: 3px solid var(--hospital-blue);">
+      <span style="font-size: 0.74rem; font-weight: 700; color: var(--hospital-blue-dark); text-transform: uppercase;">CLINICAL INQUIRY:</span>
+      <p style="font-size: 0.95rem; color: var(--text-main); font-weight: 600; margin-top: 0.2rem;">{{ user_input }}</p>
+    </div>
+  </div>
+
+  <!-- Primary Consultation Content -->
+  <div class="hospital-card" style="padding: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--hospital-border-light); padding-bottom: 0.8rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--hospital-navy); display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-stethoscope" style="color: var(--hospital-blue);"></i> Evidence-Based Clinical Recommendations
+      </h3>
+      <span class="physician-badge">
+        <i class="fa-solid fa-stethoscope"></i> Clinical Rounds Consult
+      </span>
+    </div>
+
+    <div id="resultsText" class="clinical-chart-box">{{ response }}</div>
+
+    <!-- Hospital Verification Stamp -->
+    <div style="margin-top: 1.8rem; background: var(--hospital-bg-subtle); border: 1px solid var(--hospital-surface-border); border-radius: var(--radius-sm); padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Clinical Decision Review</div>
+        <div style="font-size: 0.95rem; font-weight: 700; color: var(--hospital-navy); margin-top: 0.2rem;">
+          Validated for Hospital Inpatient Rounds &bull; Attending: <span style="color: var(--hospital-blue-dark);">Dr. {{ session.get('user_name') }}</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary);">Archived in Hospital Patient Records Vault</div>
+      </div>
+      <div style="text-align: right;">
+        <span class="triage-level-badge" style="background: var(--clinical-green-light); color: var(--clinical-green); border-color: rgba(22, 163, 74, 0.3);">
+          <i class="fa-solid fa-clipboard-check"></i> Rounds Confirmed
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function copyResults() {
+    const text = document.getElementById('resultsText').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const copyText = document.getElementById('copyText');
+      const copyIcon = document.getElementById('copyIcon');
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check';
+      setTimeout(() => {
+        copyText.innerText = 'Copy Consult';
+        copyIcon.className = 'fa-regular fa-copy';
+      }, 2000);
+    });
+  }
+</script>
+{% endblock %}

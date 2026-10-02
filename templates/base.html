@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Metropolitan General Hospital - Clinical Decision Workstation{% endblock %}</title>
+  
+  <!-- Fonts: Professional Clinical Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Hospital Clinical Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Hospital Department Header Ribbon -->
+  <div class="hospital-top-ribbon">
+    <div class="hospital-top-ribbon-left">
+      <span class="ribbon-badge"><i class="fa-solid fa-hospital"></i> METROPOLITAN GENERAL HOSPITAL</span>
+      <span class="ribbon-badge" style="color: #38bdf8;"><i class="fa-solid fa-shield-halved"></i> EMR / EHR Clinical Decision Support System</span>
+      <span style="color: #64748b;">|</span>
+      <span>Department: General Internal Medicine & Triage</span>
+    </div>
+    <div class="hospital-top-ribbon-right">
+      <span class="ribbon-badge" style="color: #34d399;"><i class="fa-solid fa-circle-check"></i> System Operational</span>
+      <span>Gemini 2.5 Flash Engine</span>
+      <span style="color: #94a3b8;"><i class="fa-solid fa-lock"></i> HIPAA Compliant</span>
+    </div>
+  </div>
+
+  <!-- Primary Hospital Navigation Bar -->
+  <header class="app-navbar">
+    <a href="{{ url_for('index') }}" class="brand-container">
+      <div class="brand-hospital-cross">
+        <i class="fa-solid fa-square-plus"></i>
+      </div>
+      <div>
+        <span class="brand-title">HOSPITAL CLINICAL AI</span>
+        <span class="brand-tagline">Electronic Health Record & Decision Support</span>
+      </div>
+    </a>
+
+    {% if session.get('user_id') %}
+    <nav>
+      <ul class="nav-links-wrapper">
+        <li><a href="{{ url_for('index') }}" class="nav-item-link {% if request.path == '/' %}active{% endif %}"><i class="fa-solid fa-gauge-high"></i> Clinical Overview</a></li>
+        <li><a href="{{ url_for('diagnosis_index') }}" class="nav-item-link {% if '/diagnosis' in request.path %}active{% endif %}"><i class="fa-solid fa-heart-pulse"></i> Triage & Diagnosis</a></li>
+        <li><a href="{{ url_for('medicine_index') }}" class="nav-item-link {% if '/medicine' in request.path %}active{% endif %}"><i class="fa-solid fa-prescription-bottle-medical"></i> Hospital Formulary</a></li>
+        <li><a href="{{ url_for('image_analysis') }}" class="nav-item-link {% if '/image' in request.path %}active{% endif %}"><i class="fa-solid fa-x-ray"></i> PACS Radiology</a></li>
+        <li><a href="{{ url_for('chatbot') }}" class="nav-item-link {% if '/chat' in request.path %}active{% endif %}"><i class="fa-solid fa-user-doctor"></i> Physician Rounds</a></li>
+        <li><a href="{{ url_for('history') }}" class="nav-item-link {% if '/history' in request.path %}active{% endif %}"><i class="fa-solid fa-folder-tree"></i> Patient Records</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-actions">
+      <div class="user-badge" title="{{ session.get('user_email') }}">
+        <div class="user-avatar-circle">
+          {{ (session.get('user_name') or 'U')[0] | upper }}
+        </div>
+        <span>Dr. {{ session.get('user_name') }}</span>
+      </div>
+
+      <a href="{{ url_for('logout') }}" class="btn-hospital-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" title="Sign out of hospital station">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Exit Station
+      </a>
+    </div>
+    {% else %}
+    <div class="nav-actions">
+      <a href="{{ url_for('login') }}" class="btn-hospital-secondary">Physician Login</a>
+      <a href="{{ url_for('signup') }}" class="btn-hospital-primary">Register Staff</a>
+    </div>
+    {% endif %}
+  </header>
+
+  {% if session.get('user_id') and request.path != '/' %}
+  <!-- Authentic Hospital Patient Vitals Context Bar -->
+  <div class="hospital-patient-strip">
+    <div class="patient-vitals-group">
+      <div class="vital-item">
+        <i class="fa-solid fa-bed-pulse" style="color: var(--hospital-blue);"></i>
+        <span>Active Station: <strong>Ward 3 &bull; Bed 14</strong></span>
+      </div>
+      <div class="vital-item">
+        <span>HR: <strong>74 bpm</strong></span>
+      </div>
+      <div class="vital-item">
+        <span>BP: <strong>120/80 mmHg</strong></span>
+      </div>
+      <div class="vital-item">
+        <span>SpO2: <strong>99%</strong></span>
+      </div>
+      <div class="vital-item">
+        <span>Temp: <strong>37.0 °C</strong></span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span class="triage-level-badge"><i class="fa-solid fa-clipboard-check"></i> Standard Triage</span>
+      <span style="color: var(--text-muted); font-size: 0.78rem;">Attending: <strong>Dr. {{ session.get('user_name') }}</strong></span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Flash Messages -->
+  <div class="app-main-container" style="padding-bottom: 0; padding-top: 1rem;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert-custom {% if category in ['error', 'danger'] %}error{% else %}success{% endif %}">
+            <i class="fa-solid {% if category in ['error', 'danger'] %}fa-triangle-exclamation{% else %}fa-circle-check{% endif %}" style="margin-top: 2px;"></i>
+            <div style="flex: 1;">{{ message }}</div>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; color: inherit; cursor: pointer;">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Workstation View -->
+  <main class="app-main-container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Hospital Footer with Developer LinkedIn Attribution ONLY -->
+  <footer class="app-footer">
+    <div class="footer-dev-credit">
+      <i class="fa-brands fa-linkedin" style="color: #0077b5; font-size: 1.1rem;"></i>
+      <span>Designed & Developed by <a href="{{ developer_linkedin }}" target="_blank" rel="noopener noreferrer" style="color: var(--hospital-blue-dark); font-weight: 700; text-decoration: none; margin-left: 0.2rem;">{{ developer_name }}</a></span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1.2rem;">
+      <span style="color: var(--clinical-green); font-weight: 600;"><i class="fa-solid fa-circle" style="font-size: 0.6rem;"></i> EHR Gateway Online</span>
+      <span>SQLite Clinical DB &bull; Pydantic Verifier</span>
+      <span>AI Model: {{ gemini_model_name }}</span>
+    </div>
+  </footer>
+
+  <!-- Loading Animation Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner-pulse"></div>
+    <p style="font-weight: 700; font-size: 1.1rem;">Retrieving Clinical Decision Synthesis...</p>
+    <span style="font-size: 0.85rem; color: #cbd5e1;">Querying Metropolitan Hospital Clinical AI Engine</span>
+  </div>
+
+  <!-- Marked.js for Clinical Report Markdown Parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    function parseClinicalMarkdown(text) {
+      if (window.marked && typeof window.marked.parse === 'function') {
+        try {
+          return window.marked.parse(text);
+        } catch (e) {
+          console.error("Marked error, falling back:", e);
+        }
+      }
+      let html = text
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^\s*[\*\-]\s+\*\*(.*?):\*\*(.*)$/gim, '<li style="margin-bottom: 0.4rem;"><strong>$1:</strong>$2</li>')
+        .replace(/^\s*[\*\-]\s+(.*)$/gim, '<li style="margin-bottom: 0.35rem;">$1</li>')
+        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+        .replace(/^---$/gim, '<hr>')
+        .replace(/\n{2,}/gim, '</p><p>')
+        .replace(/\n/gim, '<br>');
+      return '<p>' + html + '</p>';
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelectorAll('.clinical-chart-box').forEach(el => {
+        const raw = el.getAttribute('data-raw') || el.textContent;
+        if (raw) {
+          el.innerHTML = parseClinicalMarkdown(raw);
+        }
+      });
+    });
+
+    document.querySelectorAll('form').forEach(form => {
+      form.addEventListener('submit', function() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay && !form.classList.contains('no-loader')) {
+          overlay.style.display = 'flex';
+        }
+      });
+    });
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

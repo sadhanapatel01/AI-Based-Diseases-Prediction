@@ -1,0 +1,7 @@
+Timestamp: 2026-09-30_08-45-34
+========================================
+Clinical Input / Inquiry:
+Search By: generic, Compound: Metformin, Standards: UK
+
+Clinical Evaluation & Recommendations:
+Error communicating with clinical AI engine: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}

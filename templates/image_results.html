@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}PACS Radiology Diagnostic Report - Metropolitan General Hospital{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+  
+  <!-- Hospital Radiology Report Header -->
+  <div class="hospital-card" style="margin-bottom: 1.5rem; background: #ffffff; border-top: 4px solid #6366f1;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid var(--hospital-border-light); padding-bottom: 1rem; margin-bottom: 1rem;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+          <span class="triage-level-badge" style="background: #e0e7ff; color: #3730a3; border-color: rgba(99, 102, 241, 0.3);">
+            <i class="fa-solid fa-x-ray"></i> Official PACS Radiologic Study
+          </span>
+          <span style="font-size: 0.8rem; color: var(--hospital-blue-dark); font-weight: 700;">Accession #RAD-4412</span>
+        </div>
+        <h1 style="font-size: 1.7rem; font-weight: 800; color: var(--hospital-navy); margin-bottom: 0.2rem;">
+          Diagnostic Radiology Interpretation Report
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.84rem;">
+          Metropolitan General Hospital &bull; PACS Reading Room 4 &bull; Gemini 2.5 Flash Vision
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.6rem; align-items: center;">
+        <button onclick="copyResults()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-regular fa-copy" id="copyIcon"></i> <span id="copyText">Copy Radiology Report</span>
+        </button>
+        <button onclick="window.print()" class="btn-hospital-secondary" style="font-size: 0.82rem; padding: 0.5rem 0.9rem;">
+          <i class="fa-solid fa-print"></i> Print Radiology Sheet
+        </button>
+        <a href="{{ url_for('image_analysis') }}" class="btn-hospital-primary" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i> New Imaging Study
+        </a>
+      </div>
+    </div>
+
+    <!-- PACS DICOM Telemetry Strip -->
+    <div class="pacs-viewer-frame">
+      <div class="pacs-telemetry-header">
+        <span>EXAMINATION: {{ analysis_type | replace('_', ' ') | upper }}</span>
+        <span>MODALITY: DIGITAL RADIOGRAPHY (CR/DX)</span>
+        <span>STATUS: VERIFIED & FINALIZED</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; color: #cbd5e1;">
+        <div>STUDY DATE: 2026-09-15</div>
+        <div>READING RADIOLOGIST: DR. {{ (session.get('user_name') or 'ATTENDING') | upper }}</div>
+        <div>CONTRAST: NONE ADMINISTERED</div>
+        <div>CLINICAL RESOLUTION: 4K HIGH CONTRAST PACS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Radiologist Report Body -->
+  <div class="hospital-card" style="padding: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--hospital-border-light); padding-bottom: 0.8rem; margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--hospital-navy); display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-notes-medical" style="color: #6366f1;"></i> Radiologic Findings, Impression & Recommendations
+      </h3>
+      <span class="physician-badge">
+        <i class="fa-solid fa-stamp"></i> PACS Certified Reading
+      </span>
+    </div>
+
+    <div id="resultsText" class="clinical-chart-box" style="border-left-color: #6366f1;">{{ analysis_result }}</div>
+
+    <!-- Radiology Quality Assurance Box -->
+    <div style="margin-top: 1.8rem; background: var(--hospital-bg-subtle); border: 1px solid var(--hospital-surface-border); border-radius: var(--radius-sm); padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Department of Diagnostic Imaging QA</div>
+        <div style="font-size: 0.95rem; font-weight: 700; color: var(--hospital-navy); margin-top: 0.2rem;">
+          Report Authenticated by <span style="color: var(--hospital-blue-dark);">Dr. {{ session.get('user_name') }}</span> (Attending Radiologist)
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary);">Metropolitan General Hospital PACS Department &bull; Digital Archival Confirmed</div>
+      </div>
+      <div style="text-align: right;">
+        <span class="triage-level-badge" style="background: var(--clinical-green-light); color: var(--clinical-green); border-color: rgba(22, 163, 74, 0.3);">
+          <i class="fa-solid fa-stamp"></i> Radiologist Certified
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function copyResults() {
+    const text = document.getElementById('resultsText').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const copyText = document.getElementById('copyText');
+      const copyIcon = document.getElementById('copyIcon');
+      copyText.innerText = 'Copied!';
+      copyIcon.className = 'fa-solid fa-check';
+      setTimeout(() => {
+        copyText.innerText = 'Copy Radiology Report';
+        copyIcon.className = 'fa-regular fa-copy';
+      }, 2000);
+    });
+  }
+</script>
+{% endblock %}

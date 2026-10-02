@@ -1,0 +1,15 @@
+Timestamp: 2026-10-02_08-31-45
+========================================
+Clinical Input / Inquiry:
+ML Prediction: Pneumonia
+Selected Symptoms (4): rusty_sputum, stomach_bleeding, blood_in_sputum, small_dents_in_nails
+Gender: Male, Age: 42, Diabetes: yes, History: none
+
+Clinical Evaluation & Recommendations:
+### ML Prediction
+**Primary Predicted Disease:** Pneumonia
+**Number of Symptoms:** 4
+**Model:** Random Forest
+
+### Gemini Clinical Explanation
+Error communicating with clinical AI engine: 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use models/gemini-3.8-flash for the latest features and improvements. We recommend you to use the Interactions API (https://ai.google.dev/gemini-api/docs/get-started).', 'status': 'NOT_FOUND'}}
